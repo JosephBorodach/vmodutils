@@ -511,16 +511,13 @@ func GetMergedPointCloudFromMultiPositionSwitch(ctx context.Context, s toggleswi
 
 		totalSize += pc.Size()
 
-		// Transform this point cloud into the world frame
+		// DEBUG: skipping ApplyOffset to test whether the camera chain already returns world-frame points.
+		// Still fetch the camera pose so per-pose files keep the same shape for comparison.
 		pif, err := fsSvc.GetPose(ctx, srcCamera.Name().Name, "", nil, nil)
 		if err != nil {
 			return nil, err
 		}
-		pcInWorld := pointcloud.NewBasicPointCloud(pc.Size())
-		err = pointcloud.ApplyOffset(pc, pif.Pose(), pcInWorld)
-		if err != nil {
-			return nil, err
-		}
+		pcInWorld := pc
 
 		pcsInWorld = append(pcsInWorld, pcInWorld)
 
